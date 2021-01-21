@@ -1,11 +1,16 @@
+//grabbing data from the HTML
 var $todaysDate = $('#currentDay');
 var $timeBlockHour = $(".row");
 var $timeBlockEntry = $(".saveBtn");
+
 //Grab today’s date and hour
 var currentDate = moment().format("dddd, MMMM DD, YYYY");
 var currentHour = moment().format("H");
+
+//setting a var for the agenda Items
 var agendaItems = [""];
-//colour-coding time blocks based on time
+
+//initiating day when local storage is empty
 function initiateDay() {
     $timeBlockHour.each(function () {
         var $currentBlock = $(this);
@@ -14,12 +19,14 @@ function initiateDay() {
             hour: currentBlockTime,
             text: "",
         };
-        // console.log(agendaItems);
+
         agendaItems.push(agendaItemObj);
     });
     //save data to storage
     localStorage.setItem("agendaItems", JSON.stringify(agendaItems));
 }
+
+//colour-coding time blocks based on time
 function colorBlocking() {
     $timeBlockHour.each(function () {
         var $currentBlock = $(this);
@@ -33,6 +40,8 @@ function colorBlocking() {
         }
     });
 }
+
+//building day from local storage
 function buildSchedule() {
     agendaItems = localStorage.getItem("agendaItems");
     agendaItems = JSON.parse(agendaItems);
@@ -44,6 +53,8 @@ function buildSchedule() {
         $(`.row[data-hour=${agendaHour}]`).children("textarea").val(agendaText);
     }
 }
+
+//allowing user to save agenda items
 function saveButtonHandler() {
     var $currentBlock = $(this).parent();
     console.log($currentBlock);
@@ -57,8 +68,10 @@ function saveButtonHandler() {
         }
     }
     localStorage.setItem("agendaItems", JSON.stringify(agendaItems));
-    // buildSchedule();
+
 }
+
+//loading agenda when window loads. Will grab from local storage if available. If not it will run initiate day function
 window.onload = function () {
     $todaysDate.text("Today is: " + currentDate);
     colorBlocking();
@@ -68,6 +81,6 @@ window.onload = function () {
     } else {
         buildSchedule();
     }
-    // console.log(‘$timeBlockEntry:  ’, $timeBlockEntry);
+
     $timeBlockEntry.on("click", saveButtonHandler);
 };
